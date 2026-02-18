@@ -6,61 +6,54 @@ import pandas as pd
 st.set_page_config(page_title="Check-in Cognitivo", layout="centered")
 
 st.title("🧠 Check-in Cognitivo de Segurança")
-st.write("Teste rápido de atenção (≈2 minutos)")
+st.write("Quando aparecer VERDE, pressione a tecla ESPAÇO rapidamente")
 
-nome = st.text_input("Digite seu nome ou matrícula")
+nome = st.text_input("Nome ou matrícula")
 
-# estados
 if "rodada" not in st.session_state:
     st.session_state.rodada = 0
     st.session_state.tempos = []
-    st.session_state.mostrar_botao = False
     st.session_state.inicio = 0
+    st.session_state.ativo = False
 
-# iniciar teste
 if st.button("Iniciar Teste"):
     st.session_state.rodada = 1
     st.session_state.tempos = []
-    st.session_state.mostrar_botao = False
+    st.session_state.ativo = True
 
-# rodadas
-if st.session_state.rodada >= 1 and st.session_state.rodada <= 5:
+if st.session_state.ativo and st.session_state.rodada <= 5:
 
     st.write(f"Rodada {st.session_state.rodada}/5")
+    st.info("Aguarde a tela ficar verde...")
 
-if not st.session_state.mostrar_botao:
-    st.info("Aguarde aparecer o botão...")
     delay = random.uniform(2,5)
     time.sleep(delay)
-    st.session_state.mostrar_botao = True
-    st.session_state.inicio = time.time()
-    st.rerun()
 
-if st.session_state.mostrar_botao:
-    if st.button("CLIQUE AGORA!"):
-        tempo_bruto = (time.time() - st.session_state.inicio) * 1000
-        tempo = max(tempo_bruto - 700, 0)
+    st.success("PRESSIONE ESPAÇO AGORA!")
+    st.session_state.inicio = time.time()
+
+    tecla = st.text_input("Pressione ESPAÇO e ENTER")
+
+    if tecla:
+        tempo = (time.time() - st.session_state.inicio) * 1000
         st.session_state.tempos.append(tempo)
-        st.success(f"Tempo: {int(tempo)} ms")
+        st.write(f"Tempo: {int(tempo)} ms")
 
         st.session_state.rodada += 1
-        st.session_state.mostrar_botao = False
         st.rerun()
 
-# resultado final
 if st.session_state.rodada > 5:
 
-    tempos = st.session_state.tempos
-    media = sum(tempos)/len(tempos)
-    desvio = pd.Series(tempos).std()
+    media = sum(st.session_state.tempos)/len(st.session_state.tempos)
+    desvio = pd.Series(st.session_state.tempos).std()
 
     st.subheader("Resultado")
     st.write(f"Tempo médio: {int(media)} ms")
     st.write(f"Variabilidade: {int(desvio)}")
 
-    if media <= 650 and desvio <= 120:
+    if media <= 350 and desvio <= 80:
         st.success("🟢 PRONTIDÃO IDEAL")
-    elif media <= 900 and desvio <= 200:
+    elif media <= 600 and desvio <= 150:
         st.warning("🟡 ATENÇÃO")
     else:
         st.error("🔴 RISCO")
