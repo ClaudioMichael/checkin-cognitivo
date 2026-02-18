@@ -11,31 +11,39 @@ st.write("Teste rápido de atenção (≈2 minutos)")
 
 nome = st.text_input("Digite seu nome ou matrícula")
 
+# estados da sessão
 if "rodada" not in st.session_state:
     st.session_state.rodada = 0
     st.session_state.tempos = []
     st.session_state.iniciado = False
+    st.session_state.start_time = 0
 
+# botão iniciar
 if st.button("Iniciar Teste"):
     st.session_state.iniciado = True
     st.session_state.rodada = 1
     st.session_state.tempos = []
 
+# lógica das rodadas
 if st.session_state.iniciado and st.session_state.rodada <= 5:
 
     st.write(f"Rodada {st.session_state.rodada}/5")
 
+    # esperar tempo aleatório
     delay = random.uniform(2,5)
     time.sleep(delay)
 
-    start_time = time.time()
+    # registrar início
+    st.session_state.start_time = time.time()
+
     if st.button("CLIQUE RÁPIDO AGORA!"):
-        reaction_time = (time.time() - start_time) * 1000
+        reaction_time = (time.time() - st.session_state.start_time) * 1000
         st.session_state.tempos.append(reaction_time)
         st.success(f"Tempo: {int(reaction_time)} ms")
         st.session_state.rodada += 1
-        st.experimental_rerun()
+        st.rerun()
 
+# resultado final
 if st.session_state.rodada > 5:
 
     tempos = st.session_state.tempos
