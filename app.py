@@ -57,9 +57,9 @@ if st.session_state.rodada > 5:
     st.write(f"Tempo médio: {int(media)} ms")
     st.write(f"Variabilidade: {int(desvio)}")
 
-    if media <= 280 and desvio <= 40:
+    if media <= 650 and desvio <= 120:
         st.success("🟢 PRONTIDÃO IDEAL")
-    elif media <= 350 and desvio <= 70:
+    elif media <= 900 and desvio <= 200:
         st.warning("🟡 ATENÇÃO")
     else:
         st.error("🔴 RISCO")
