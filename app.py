@@ -38,7 +38,8 @@ if not st.session_state.mostrar_botao:
 
 if st.session_state.mostrar_botao:
     if st.button("CLIQUE AGORA!"):
-        tempo = (time.time() - st.session_state.inicio) * 1000
+        tempo_bruto = (time.time() - st.session_state.inicio) * 1000
+        tempo = max(tempo_bruto - 700, 0)
         st.session_state.tempos.append(tempo)
         st.success(f"Tempo: {int(tempo)} ms")
 
