@@ -62,8 +62,34 @@ if st.session_state.rodada > 5:
     df.to_csv("resultados.csv", mode="a", header=False, index=False)
 
     st.subheader("Resultado")
-    st.write(f"Tempo médio: {int(media)} ms")
-    st.write(f"Variabilidade: {int(desvio)}")
-    st.write(f"Índice de Atenção: {round(indice,6)}")
+
+st.write(f"Tempo médio: {int(media)} ms")
+st.write(f"Variabilidade: {int(desvio)}")
+
+# CLASSIFICAÇÃO TEMPO
+if media <= 280:
+    status_tempo = "bom"
+elif media <= 350:
+    status_tempo = "normal"
+elif media <= 450:
+    status_tempo = "ruim"
+else:
+    status_tempo = "critico"
+
+# CLASSIFICAÇÃO VARIABILIDADE
+if desvio <= 40:
+    status_var = "estavel"
+elif desvio <= 70:
+    status_var = "medio"
+else:
+    status_var = "instavel"
+
+# STATUS FINAL
+if status_tempo == "bom" and status_var == "estavel":
+    st.success("🟢 PRONTIDÃO IDEAL")
+elif status_tempo in ["normal","ruim"] or status_var == "medio":
+    st.warning("🟡 ATENÇÃO – atenção moderada")
+else:
+    st.error("🔴 RISCO – baixa prontidão cognitiva")
 
     st.success("Teste concluído!")
