@@ -11,25 +11,34 @@ st.write("Teste rápido de atenção (≈2 minutos)")
 
 nome = st.text_input("Digite seu nome ou matrícula")
 
+if "rodada" not in st.session_state:
+    st.session_state.rodada = 0
+    st.session_state.tempos = []
+    st.session_state.iniciado = False
+
 if st.button("Iniciar Teste"):
+    st.session_state.iniciado = True
+    st.session_state.rodada = 1
+    st.session_state.tempos = []
 
-    tempos = []
+if st.session_state.iniciado and st.session_state.rodada <= 5:
 
-    for i in range(5):
-        st.write(f"Rodada {i+1}/5 - Aguarde a tela ficar VERDE")
+    st.write(f"Rodada {st.session_state.rodada}/5")
 
-        delay = random.uniform(2,5)
-        time.sleep(delay)
+    delay = random.uniform(2,5)
+    time.sleep(delay)
 
-        st.markdown("<h1 style='color:green;'>APERTE ENTER AGORA!</h1>", unsafe_allow_html=True)
-
-        start_time = time.time()
-        input("Pressione ENTER")
+    start_time = time.time()
+    if st.button("CLIQUE RÁPIDO AGORA!"):
         reaction_time = (time.time() - start_time) * 1000
-
-        tempos.append(reaction_time)
+        st.session_state.tempos.append(reaction_time)
         st.success(f"Tempo: {int(reaction_time)} ms")
+        st.session_state.rodada += 1
+        st.experimental_rerun()
 
+if st.session_state.rodada > 5:
+
+    tempos = st.session_state.tempos
     media = sum(tempos)/len(tempos)
     desvio = pd.Series(tempos).std()
     indice = 1/(media*desvio)
